@@ -18,6 +18,8 @@ public class AddNoteActivity extends AppCompatActivity {
     private RadioButton radioButtonMediumPriority;
     private Button buttonSave;
 
+    private Database database = Database.getInstance();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,11 @@ public class AddNoteActivity extends AppCompatActivity {
         if (editTextNote != null) {
             String text = editTextNote.getText().toString().trim();
             int priority = getPriority();
+            int id = database.getNotes().size();
+            Note note = new Note(id, text, priority);
+            database.add(note);
+
+            finish();
         } else{
             Toast.makeText(this, "Поле не может быть пустым!", Toast.LENGTH_SHORT).show();
         }
