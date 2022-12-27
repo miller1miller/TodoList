@@ -10,5 +10,4 @@
     android:textColor="@color/white"
     android:textSize="16sp"
     tools:background="@color/teal_200"
-
     tools:text="Hello" />
