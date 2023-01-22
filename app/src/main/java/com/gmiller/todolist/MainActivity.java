@@ -20,18 +20,17 @@ public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton buttonAddNote;
     private RecyclerView recyclerViewNotes;
-
-    private NoteDatabase noteDatabase;
     private NotesAdapter notesAdapter;
+
+    private MainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        noteDatabase = NoteDatabase.getInstance(getApplication());
-
+        viewModel = new MainViewModel(getApplication());
         initViews();
+
         notesAdapter = new NotesAdapter();
         notesAdapter.setOnNoteClickListener(new NotesAdapter.OnNoteClickListener() {
             @Override
@@ -40,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         });
         recyclerViewNotes.setAdapter(notesAdapter);
 
-        noteDatabase.notesDao().getNotes().observe(this, new Observer<List<Note>>() {
+        viewModel.getNotes().observe(this, new Observer<List<Note>>() {
             @Override
             public void onChanged(List<Note> notes) {
                 notesAdapter.setNotes(notes);
@@ -65,14 +64,7 @@ public class MainActivity extends AppCompatActivity {
                     ) {
                         int position = viewHolder.getAdapterPosition();
                         Note note = notesAdapter.getNotes().get(position);
-
-                        Thread thread = new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                noteDatabase.notesDao().remove(note.getId());
-                            }
-                        });
-                        thread.start();
+                        viewModel.remove(note);
                     }
                 });
         itemTouchHelper.attachToRecyclerView(recyclerViewNotes);
